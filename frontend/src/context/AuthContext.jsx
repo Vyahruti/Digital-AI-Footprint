@@ -1,7 +1,22 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import axios from 'axios'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+// Determine API URL based on runtime environment
+const getAPIBaseURL = () => {
+  if (typeof window === 'undefined') {
+    return 'https://digital-ai-footprint.onrender.com/api'
+  }
+  
+  // Check if running on localhost
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return 'http://localhost:8000/api'
+  }
+  
+  // Production: use Render backend
+  return 'https://digital-ai-footprint.onrender.com/api'
+}
+
+const API_BASE_URL = getAPIBaseURL()
 
 const AuthContext = createContext(null)
 

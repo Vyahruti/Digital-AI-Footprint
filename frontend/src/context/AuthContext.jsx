@@ -73,12 +73,17 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
+      console.log('Attempting login with email:', email)
       const response = await axios.post(`${API_BASE_URL}/auth/login`, {
         email,
         password,
       })
       
+      console.log('Login response:', response.data)
       const { access_token, user: userData } = response.data
+      
+      console.log('Token:', access_token)
+      console.log('User data:', userData)
       
       // Store token and user
       localStorage.setItem('auth_token', access_token)
@@ -87,11 +92,14 @@ export const AuthProvider = ({ children }) => {
       setToken(access_token)
       setUser(userData)
       
+      console.log('Login successful, token stored')
       return { success: true }
     } catch (error) {
+      console.error('Login error:', error)
+      console.error('Error response:', error.response?.data)
       return {
         success: false,
-        error: error.response?.data?.detail || 'Login failed'
+        error: error.response?.data?.detail || error.message || 'Login failed'
       }
     }
   }

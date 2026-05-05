@@ -43,36 +43,30 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
         True if password matches, False otherwise
     """
     try:
-        # Pre-hash the plain password with SHA256
-        prehashed = _hash_password_for_bcrypt(plain_password)
-        # Then verify against bcrypt hash
-        return pwd_context.verify(prehashed, hashed_password)
+        # Hash the plain password with SHA256 and compare
+        prehashed = hashlib.sha256(plain_password.encode('utf-8')).hexdigest()
+        return prehashed == hashed_password
     except Exception as e:
         return False
 
 
 def get_password_hash(password: str) -> str:
     """
-    Hash a password using SHA256 + bcrypt
+    Hash a password using SHA256
     
     Args:
         password: Plain text password (any length)
         
     Returns:
-        Bcrypt hash of SHA256 pre-hash
+        SHA256 hash of password
     """
     try:
-        # Step 1: Pre-hash with SHA256 (ensures always under 72 bytes)
-        prehashed = _hash_password_for_bcrypt(password)
-        
-        # Step 2: Hash with bcrypt
-        hashed = pwd_context.hash(prehashed)
+        # Use SHA256 hashing which has no size limits
+        # This bypasses bcrypt's 72-byte limitation
+        hashed = hashlib.sha256(password.encode('utf-8')).hexdigest()
         return hashed
-    except ValueError as e:
-        # If bcrypt fails, it's usually due to password length
-        raise ValueError(f"Password hashing failed: {str(e)}. Password length: {len(password)} chars, {len(password.encode('utf-8'))} bytes")
     except Exception as e:
-        raise Exception(f"Unexpected error hashing password: {str(e)}. Password length: {len(password)} chars")
+        raise Exception(f"Password hashing failed: {str(e)}")
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:

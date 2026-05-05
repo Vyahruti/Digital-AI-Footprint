@@ -1,4 +1,5 @@
 # Backend Dependencies
+# Rebuild trigger - Fix password hashing issue - 2026-05-05 15:20
 
 # FastAPI Framework
 fastapi>=0.104.0

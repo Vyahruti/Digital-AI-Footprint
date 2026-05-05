@@ -13,8 +13,8 @@ const getChatbotURL = () => {
     return 'http://localhost:5000'
   }
   
-  // Production: use Render chatbot service (update this with actual URL when deployed)
-  return process.env.REACT_APP_CHATBOT_URL || 'https://digital-ai-footprint-chatbot.onrender.com'
+  // Production: use Render chatbot service
+  return 'https://digital-ai-footprint-chatbot.onrender.com'
 }
 
 const CHATBOT_URL = getChatbotURL()

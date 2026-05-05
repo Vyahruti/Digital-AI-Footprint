@@ -4,13 +4,12 @@ Wrapper to run the FastAPI app from backend directory
 import sys
 import os
 
-# Get the directory of this file
-base_dir = os.path.dirname(os.path.abspath(__file__))
+# Change to backend directory
+backend_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'backend')
+os.chdir(backend_dir)
+sys.path.insert(0, backend_dir)
 
-# Add backend to path
-sys.path.insert(0, os.path.join(base_dir, 'backend'))
-
-# Now import from the backend's main.py
+# Now import from the backend's modules
 from app.api import api_router
 from app.core.config import settings
 from app.db.mongodb import connect_to_mongo, close_mongo_connection
@@ -93,4 +92,5 @@ if __name__ == "__main__":
         port=settings.PORT,
         reload=settings.DEBUG
     )
+
 

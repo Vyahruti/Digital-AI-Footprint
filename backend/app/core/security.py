@@ -61,11 +61,18 @@ def get_password_hash(password: str) -> str:
     Returns:
         Bcrypt hash of SHA256 pre-hash
     """
-    # Step 1: Pre-hash with SHA256 (ensures always under 72 bytes)
-    prehashed = _hash_password_for_bcrypt(password)
-    
-    # Step 2: Hash with bcrypt
-    return pwd_context.hash(prehashed)
+    try:
+        # Step 1: Pre-hash with SHA256 (ensures always under 72 bytes)
+        prehashed = _hash_password_for_bcrypt(password)
+        
+        # Step 2: Hash with bcrypt
+        hashed = pwd_context.hash(prehashed)
+        return hashed
+    except ValueError as e:
+        # If bcrypt fails, it's usually due to password length
+        raise ValueError(f"Password hashing failed: {str(e)}. Password length: {len(password)} chars, {len(password.encode('utf-8'))} bytes")
+    except Exception as e:
+        raise Exception(f"Unexpected error hashing password: {str(e)}. Password length: {len(password)} chars")
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:

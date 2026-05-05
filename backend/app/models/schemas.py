@@ -293,7 +293,7 @@ class GitHubAnalysisResult(BaseModel):
 class UserRegistrationRequest(BaseModel):
     """Request model for user registration"""
     email: str = Field(..., description="User email address")
-    password: str = Field(..., min_length=8, max_length=100, description="Password (min 8 characters)")
+    password: str = Field(..., min_length=8, max_length=72, description="Password (min 8 characters, max 72 for bcrypt compatibility)")
     full_name: Optional[str] = Field(default=None, max_length=100, description="User's full name")
 
 

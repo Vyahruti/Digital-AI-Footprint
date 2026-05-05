@@ -108,22 +108,27 @@ async def register(request: UserRegistrationRequest):
     Returns JWT access token and user information
     """
     try:
+        # Strip whitespace from password and email
+        email = request.email.strip() if request.email else ""
+        password = request.password.strip() if request.password else ""
+        full_name = request.full_name.strip() if request.full_name else None
+        
         # Validate email format
-        if not request.email or "@" not in request.email:
+        if not email or "@" not in email:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid email format"
             )
         
         # Validate password length (minimum 8 characters)
-        if len(request.password) < 8:
+        if len(password) < 8:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Password must be at least 8 characters long"
             )
         
         # Check if user already exists
-        existing_user = await get_user_by_email(request.email)
+        existing_user = await get_user_by_email(email)
         if existing_user:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -132,9 +137,9 @@ async def register(request: UserRegistrationRequest):
         
         # Create new user
         user = await create_user(
-            email=request.email,
-            password=request.password,
-            full_name=request.full_name
+            email=email,
+            password=password,
+            full_name=full_name
         )
         
         # Create access token

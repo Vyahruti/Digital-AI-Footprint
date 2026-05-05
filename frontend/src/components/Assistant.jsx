@@ -2,6 +2,23 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Bot, Send, Sparkles, MessageCircle } from 'lucide-react'
 
+// Determine chatbot URL based on runtime environment
+const getChatbotURL = () => {
+  if (typeof window === 'undefined') {
+    return 'http://localhost:5000'
+  }
+  
+  // Check if running on localhost
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return 'http://localhost:5000'
+  }
+  
+  // Production: use Render chatbot service (update this with actual URL when deployed)
+  return process.env.REACT_APP_CHATBOT_URL || 'https://digital-ai-footprint-chatbot.onrender.com'
+}
+
+const CHATBOT_URL = getChatbotURL()
+
 const Assistant = () => {
   const [message, setMessage] = useState('')
   const [chat, setChat] = useState([])
@@ -22,7 +39,7 @@ const Assistant = () => {
     setLoading(true)
 
     try {
-      const res = await fetch('http://localhost:5000/chat', {
+      const res = await fetch(`${CHATBOT_URL}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userMessage })
